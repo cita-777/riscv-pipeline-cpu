@@ -43,7 +43,7 @@ module id (
     output reg                  branch_flag_o,  //分支标志
     output reg[`InstAddrBus]    branch_addr_o   //分支地址
 );
-
+    //指令字段解码
     wire[6:0] opcode = inst_i[6:0];
     wire[2:0] funct3 = inst_i[14:12];
     wire[6:0] funct7 = inst_i[31:25];
@@ -51,8 +51,9 @@ module id (
     wire[4:0] rs1 = inst_i[19:15];
     wire[4:0] rs2 = inst_i[24:20];
 
+    //类型B指令的立即数
     wire[`InstAddrBus] type_b_imm;
-
+    
     wire[`RegBus] pc_plus_4;
     wire op1_greater_than_op2_singned;
     wire op1_greater_than_op2_unsigned;
@@ -84,7 +85,7 @@ module id (
     always @(*) begin
         inst_o              <= inst_i;
         if (rst == `RstEnable) begin
-            wd_o            <= `NOPRegAddr;
+            wd_o            <= `NOPRegAddr;//
             wreg_o          <= `WriteDisable;
             instvalid       <= `InstInvalid;
             reg1_read_o     <= 1'b0;

@@ -16,7 +16,7 @@ module inst_rom(
     //initial是面向仿真的，综合器一般不支持，需要的时候要改
     initial begin
         //readmemh是verilog的系统函数
-        $readmemh("D:/WorkSpace/HardwareDesign/openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt", inst_mem);
+        $readmemh("d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt", inst_mem);
     end
 
     //当复位信号无效时，根据输入的地址，给出指令存储器ROM中对应的元素

@@ -85,17 +85,17 @@
 `define InstAddrBus                 31:0            //指令存储器地址总线宽度
 `define InstBus                     31:0            //指令存储器数据总线宽度
 `define InstMemNum                  2047            //ROM容量
-`define InstMemNumLog2              11              //ROM实际使用的地址线宽度
+`define InstMemNumLog2              11              //2^11 = 2048*4B=8KB ROM实际使用的地址线宽度
 
 
 // ***************** 与通用寄存器Regfile有关的宏定义 ***********************
-`define RegAddrBus                  4:0             //寄存器地址总线宽度
+`define RegAddrBus                  4:0             //2^5 = 32 寄存器地址总线宽度
 `define RegBus                      31:0            //寄存器数据总线宽度
 `define RegWidth                    32              //寄存器宽度
 `define DoubleRegWidth              64              //两倍的寄存器宽度
 `define DoubleRegBus                63:0            //两倍的寄存器数据总线宽度
 `define RegNum                      32              //寄存器数量
-`define RegNumLog2                  5               //寄存器实际使用的地址线宽度
+`define RegNumLog2                  5               //2^5 = 32 寄存器实际使用的地址线宽度
 
 //指令无效时的写回寄存器地址
 `define NOPRegAddr                  5'b00000
@@ -104,5 +104,5 @@
 `define DataAddrBus                 31:0            //数据存储器地址总线宽度
 `define DataBus                     31:0            //数据存储器数据总线宽度
 `define DataMemNum                  2047            //RAM容量
-`define DataMemNumLog2              11              //RAM实际使用的地址线宽度
+`define DataMemNumLog2              11              //2^11 = 2048*4B=8KB RAM实际使用的地址线宽度
 `define ByteWidth                   7:0             //字节宽度

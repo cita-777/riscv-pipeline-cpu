@@ -6,22 +6,23 @@ module regfile (
     input wire                  clk,
     input wire                  rst,
 
-    //写端口
+    //写入到寄存器的端口
     //注意这里的一些端口名和书上的不一样
     input wire                  we,
     input wire[`RegAddrBus]     wr_addr,
     input wire[`RegBus]         wr_data,
 
-    //读端口1
+    //读取寄存器的端口1
     input wire                  re1,
     input wire[`RegAddrBus]     rd_addr1,
     output reg[`RegBus]         rd_data1,
 
-    //读端口2
+    //读取寄存器的端口2 
     input wire                  re2,
     input wire[`RegAddrBus]     rd_addr2,
     output reg[`RegBus]         rd_data2,
 
+    //输出寄存器3
     output reg[`RegBus]         reg3_o
 );
 
