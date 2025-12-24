@@ -1,7 +1,7 @@
-Running: xsim.dir/openriscv_min_sopc_tb_behav/xsimk.exe -simmode gui -wdb openriscv_min_sopc_tb_behav.wdb -simrunnum 0 -socket 3664
+Running: xsim.dir/openriscv_min_sopc_tb_behav/xsimk.exe -simmode gui -wdb openriscv_min_sopc_tb_behav.wdb -simrunnum 0 -socket 2762
 Design successfully loaded
-Design Loading Memory Usage: 30084 KB (Peak: 30084 KB)
-Design Loading CPU Usage: 562 ms
+Design Loading Memory Usage: 10216 KB (Peak: 10216 KB)
+Design Loading CPU Usage: 46 ms
 Simulation completed
-Simulation Memory Usage: 31556 KB (Peak: 31556 KB)
-Simulation CPU Usage: 656 ms
+Simulation Memory Usage: 11272 KB (Peak: 11272 KB)
+Simulation CPU Usage: 92 ms
