@@ -101,7 +101,7 @@ module ex(
                         wd_o    <= rd;
                     end
                     `EXE_SLLI: begin
-                        wdata_o <= reg1_i << reg2_i;
+                        wdata_o <= reg1_i << reg2_i[4:0];
                         wd_o    <= rd;
                     end
                     `EXE_SRLI: begin
@@ -120,75 +120,72 @@ module ex(
                 endcase
             end
             `INST_TYPE_R: begin
-                case(funct3)
-                    `EXE_ADD_SUB: begin
-                        if (inst_i[30] == 1'b0) begin
-                            wdata_o <= op1_add_op2;
-                            wd_o    <= rd;
-                        end else begin
-                            wdata_o <= op1_subtract_op2;
+                // RV32M 指令通过 funct7=0000001 与普通 R 型指令互斥区分
+                if (funct7 == `FUNCT7_MULDIV) begin
+                    case (funct3)
+                        `EXE_MUL:    wdata_o <= reg1_i * reg2_i;  // 低32位
+                        `EXE_MULH:   wdata_o <= (($signed({{32{reg1_i[31]}}, reg1_i}) * $signed({{32{reg2_i[31]}}, reg2_i})) >> 32);
+                        `EXE_MULHSU: wdata_o <= (($signed({{32{reg1_i[31]}}, reg1_i}) * {{32{1'b0}}, reg2_i}) >> 32);
+                        `EXE_MULHU:  wdata_o <= (({{32{1'b0}}, reg1_i} * {{32{1'b0}}, reg2_i}) >> 32);
+                        `EXE_DIV:    wdata_o <= (reg2_i == 0) ? 32'hFFFFFFFF : $signed(reg1_i) / $signed(reg2_i);
+                        `EXE_DIVU:   wdata_o <= (reg2_i == 0) ? 32'hFFFFFFFF : reg1_i / reg2_i;
+                        `EXE_REM:    wdata_o <= (reg2_i == 0) ? reg1_i : $signed(reg1_i) % $signed(reg2_i);
+                        `EXE_REMU:   wdata_o <= (reg2_i == 0) ? reg1_i : reg1_i % reg2_i;
+                        default:     wdata_o <= `ZeroWord;
+                    endcase
+                    wd_o <= rd;
+                end else begin
+                    case(funct3)
+                        `EXE_ADD_SUB: begin
+                            if (inst_i[30] == 1'b0) begin
+                                wdata_o <= op1_add_op2;
+                                wd_o    <= rd;
+                            end else begin
+                                wdata_o <= op1_subtract_op2;
+                                wd_o    <= rd;
+                            end
+                        end
+                        `EXE_OR: begin
+                            wdata_o <= reg1_i | reg2_i;
                             wd_o    <= rd;
                         end
-                    end
-                    `EXE_OR: begin
-                        wdata_o <= reg1_i | reg2_i;
-                        wd_o    <= rd;
-                    end
-                    `EXE_AND: begin
-                        wdata_o <= reg1_i & reg2_i;
-                        wd_o    <= rd;
-                    end
-                    `EXE_XOR: begin
-                        wdata_o <= reg1_i ^ reg2_i;
-                        wd_o    <= rd;
-                    end
-                    `EXE_SLT: begin
-                        //注意这里是对大于等于取反了，也就是小于。然后进行符号扩展。
-                        //SLTIU SLT SLTU与此相同
-                        wdata_o <= {32{(~op1_greater_than_op2_singned)}} & 32'h1;
-                        wd_o    <= rd;
-                    end
-                    `EXE_SLTU: begin
-                        wdata_o <= {32{(~op1_greater_than_op2_unsigned)}} & 32'h1;
-                        wd_o    <= rd;
-                    end
-                    `EXE_SLL: begin
-                        wdata_o <= reg1_i << reg2_i[4:0];
-                        wd_o    <= rd;
-                    end
-                    // ===== SRL / SRA (funct3=3'b101) =====
-                    3'b101: begin
-                        if (funct7 == `FUNCT7_MULDIV) begin
-                            // M扩展 DIVU
-                            wdata_o <= (reg2_i == 0) ? 32'hFFFFFFFF : reg1_i / reg2_i;
-                        end else if (funct7[5] == 1'b0) begin
-                            wdata_o <= reg1_i >> reg2_i[4:0];           // SRL 逻辑右移
-                        end else begin
-                            wdata_o <= $signed(reg1_i) >>> reg2_i[4:0]; // SRA 算术右移
+                        `EXE_AND: begin
+                            wdata_o <= reg1_i & reg2_i;
+                            wd_o    <= rd;
                         end
-                        wd_o    <= rd;
-                    end
-                    default: begin
-                        // ===== M扩展乘除法指令 =====
-                        if (funct7 == `FUNCT7_MULDIV) begin
-                            case (funct3)
-                                `EXE_MUL:    wdata_o <= reg1_i * reg2_i;  // 低32位
-                                `EXE_MULH:   wdata_o <= (($signed({{32{reg1_i[31]}}, reg1_i}) * $signed({{32{reg2_i[31]}}, reg2_i})) >> 32);
-                                `EXE_MULHSU: wdata_o <= (($signed({{32{reg1_i[31]}}, reg1_i}) * {{32{1'b0}}, reg2_i}) >> 32);
-                                `EXE_MULHU:  wdata_o <= (({{32{1'b0}}, reg1_i} * {{32{1'b0}}, reg2_i}) >> 32);
-                                `EXE_DIV:    wdata_o <= (reg2_i == 0) ? 32'hFFFFFFFF : $signed(reg1_i) / $signed(reg2_i);
-                                `EXE_DIVU:   wdata_o <= (reg2_i == 0) ? 32'hFFFFFFFF : reg1_i / reg2_i;
-                                `EXE_REM:    wdata_o <= (reg2_i == 0) ? reg1_i : $signed(reg1_i) % $signed(reg2_i);
-                                `EXE_REMU:   wdata_o <= (reg2_i == 0) ? reg1_i : reg1_i % reg2_i;
-                                default:     wdata_o <= `ZeroWord;
-                            endcase
-                            wd_o <= rd;
-                        end else begin
+                        `EXE_XOR: begin
+                            wdata_o <= reg1_i ^ reg2_i;
+                            wd_o    <= rd;
+                        end
+                        `EXE_SLT: begin
+                            //注意这里是对大于等于取反了，也就是小于。然后进行符号扩展。
+                            //SLTIU SLT SLTU与此相同
+                            wdata_o <= {32{(~op1_greater_than_op2_singned)}} & 32'h1;
+                            wd_o    <= rd;
+                        end
+                        `EXE_SLTU: begin
+                            wdata_o <= {32{(~op1_greater_than_op2_unsigned)}} & 32'h1;
+                            wd_o    <= rd;
+                        end
+                        `EXE_SLL: begin
+                            wdata_o <= reg1_i << reg2_i[4:0];
+                            wd_o    <= rd;
+                        end
+                        // ===== SRL / SRA (funct3=3'b101) =====
+                        3'b101: begin
+                            if (funct7[5] == 1'b0) begin
+                                wdata_o <= reg1_i >> reg2_i[4:0];           // SRL 逻辑右移
+                            end else begin
+                                wdata_o <= $signed(reg1_i) >>> reg2_i[4:0]; // SRA 算术右移
+                            end
+                            wd_o    <= rd;
+                        end
+                        default: begin
                             wdata_o <= `ZeroWord;
                             wd_o    <= `NOPRegAddr;
                         end
-                    end
-                endcase
+                    endcase
+                end
             end
             `INST_TYPE_L: begin
                 //load指令，从内存地址rs1+imm中读取数据，写入rd
