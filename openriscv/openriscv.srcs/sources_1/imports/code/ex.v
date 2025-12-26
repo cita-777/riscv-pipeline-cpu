@@ -134,6 +134,16 @@ module ex(
                         default:     wdata_o <= `ZeroWord;
                     endcase
                     wd_o <= rd;
+                end else if (funct7 == `FUNCT7_ZBB_MINMAX) begin
+                    // Zbb: min/max/minu/maxu (R-type, opcode=0110011, funct7=0000101)
+                    case (funct3)
+                        `EXE_ZBB_MIN:  wdata_o <= ($signed(reg1_i) < $signed(reg2_i)) ? reg1_i : reg2_i;
+                        `EXE_ZBB_MINU: wdata_o <= (reg1_i < reg2_i) ? reg1_i : reg2_i;
+                        `EXE_ZBB_MAX:  wdata_o <= ($signed(reg1_i) < $signed(reg2_i)) ? reg2_i : reg1_i;
+                        `EXE_ZBB_MAXU: wdata_o <= (reg1_i < reg2_i) ? reg2_i : reg1_i;
+                        default:       wdata_o <= `ZeroWord;
+                    endcase
+                    wd_o <= rd;
                 end else begin
                     case(funct3)
                         `EXE_ADD_SUB: begin
@@ -150,7 +160,12 @@ module ex(
                             wd_o    <= rd;
                         end
                         `EXE_AND: begin
-                            wdata_o <= reg1_i & reg2_i;
+                            // Zbb: andn (funct7=0100000, funct3=111)
+                            if (funct7 == `FUNCT7_ZBB_ANDN) begin
+                                wdata_o <= reg1_i & (~reg2_i);
+                            end else begin
+                                wdata_o <= reg1_i & reg2_i;
+                            end
                             wd_o    <= rd;
                         end
                         `EXE_XOR: begin
@@ -214,20 +229,6 @@ module ex(
             `EXE_AUIPC: begin
                 wdata_o <= reg1_i;  // ID阶段已计算好 imm + pc 放在 reg1_i
                 wd_o    <= rd;
-            end
-            `INST_TYPE_SYS: begin
-                // 最小实现：CSR* 写回 0；ECALL/EBREAK 视为 NOP
-                case (funct3)
-                    `EXE_CSRRW, `EXE_CSRRS, `EXE_CSRRC: begin
-                        wdata_o <= `ZeroWord;
-                        wd_o    <= rd;
-                    end
-                    default: begin
-                        wdata_o <= `ZeroWord;
-                        wd_o    <= `NOPRegAddr;
-                        wreg_o  <= `WriteDisable;
-                    end
-                endcase
             end
         endcase
     end

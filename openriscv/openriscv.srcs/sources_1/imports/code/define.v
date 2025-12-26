@@ -92,15 +92,15 @@
 `define EXE_REM                     3'b110          //有符号取余
 `define EXE_REMU                    3'b111          //无符号取余
 
-// ===== FENCE/FENCE.I 指令 =====
-`define INST_TYPE_FENCE             7'b0001111      //FENCE类型指令
+// ===== Zbb 子集：min/max + andn（R-type, opcode=0110011） =====
+`define FUNCT7_ZBB_MINMAX           7'b0000101
+`define EXE_ZBB_MIN                 3'b100
+`define EXE_ZBB_MINU                3'b101
+`define EXE_ZBB_MAX                 3'b110
+`define EXE_ZBB_MAXU                3'b111
 
-// ===== 系统指令 (ECALL/EBREAK/CSR) =====
-`define INST_TYPE_SYS               7'b1110011      //系统指令类型
-`define EXE_ECALL_EBREAK            3'b000          //ECALL/EBREAK的funct3
-`define EXE_CSRRW                   3'b001          //CSRRW指令
-`define EXE_CSRRS                   3'b010          //CSRRS指令
-`define EXE_CSRRC                   3'b011          //CSRRC指令
+`define FUNCT7_ZBB_ANDN             7'b0100000
+`define EXE_ZBB_ANDN                3'b111
 
 
 // ***************** 与指令存储器ROM有关的宏定义 ***********************
