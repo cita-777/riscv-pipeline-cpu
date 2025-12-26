@@ -215,6 +215,20 @@ module ex(
                 wdata_o <= reg1_i;  // ID阶段已计算好 imm + pc 放在 reg1_i
                 wd_o    <= rd;
             end
+            `INST_TYPE_SYS: begin
+                // 最小实现：CSR* 写回 0；ECALL/EBREAK 视为 NOP
+                case (funct3)
+                    `EXE_CSRRW, `EXE_CSRRS, `EXE_CSRRC: begin
+                        wdata_o <= `ZeroWord;
+                        wd_o    <= rd;
+                    end
+                    default: begin
+                        wdata_o <= `ZeroWord;
+                        wd_o    <= `NOPRegAddr;
+                        wreg_o  <= `WriteDisable;
+                    end
+                endcase
+            end
         endcase
     end
     

@@ -310,10 +310,32 @@ module id (
                 end
                 // ===== 系统指令 ECALL/EBREAK/CSR =====
                 `INST_TYPE_SYS: begin
-                    wreg_o      <= `WriteDisable;   //简化实现：暂时不写回
-                    reg1_read_o <= 1'b0;
-                    reg2_read_o <= 1'b0;
-                    instvalid   <= `InstValid;      //指令有效，简化处理
+                    // 最小实现：
+                    // - ECALL/EBREAK 作为 NOP（不写回、不触发异常）
+                    // - CSRRW/CSRRS/CSRRC 返回 0 写回 rd（不维护真实 CSR 状态）
+                    instvalid   <= `InstValid;
+                    case (funct3)
+                        `EXE_ECALL_EBREAK: begin
+                            wreg_o      <= `WriteDisable;
+                            reg1_read_o <= 1'b0;
+                            reg2_read_o <= 1'b0;
+                            wd_o        <= `NOPRegAddr;
+                        end
+                        `EXE_CSRRW, `EXE_CSRRS, `EXE_CSRRC: begin
+                            wreg_o      <= `WriteEnable;
+                            reg1_read_o <= 1'b1;            // 语法上使用 rs1
+                            reg2_read_o <= 1'b0;
+                            imm         <= `ZeroWord;       // EX 端会返回 0
+                            wd_o        <= rd;
+                        end
+                        default: begin
+                            // 其它 SYS 指令暂不支持：按 NOP 处理
+                            wreg_o      <= `WriteDisable;
+                            reg1_read_o <= 1'b0;
+                            reg2_read_o <= 1'b0;
+                            wd_o        <= `NOPRegAddr;
+                        end
+                    endcase
                 end
             endcase
         end     //if
