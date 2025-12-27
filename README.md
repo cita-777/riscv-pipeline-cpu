@@ -1,4 +1,4 @@
-## 基于Verilog HDL的五级流水线RISC-V CPU设计
+## 基于 Verilog HDL 的五级流水线 RISC-V CPU 设计
 
 这是合肥工业大学宣城校区2022-2023学年《系统硬件综合设计》的题目。
 
@@ -20,17 +20,33 @@
 > - 课程设计报告应该格式正确，每张图要有图名图号，表格应该有表号表名，图表需要文字说明，不能只贴图。
 > - 课设报告需要有封面，课设报告模板老师会发到群文件中。
 
-### 我们的设计
+### 工程现状
 
-该设计由我和另一位同学合作完成。我编写了CPU的所有代码，另一位同学编写了数码管驱动电路。
+该设计由两人合作完成：CPU 相关 Verilog 代码与数码管驱动电路。
 
-由于设计结题已久，具体细节已经记不清楚，可以参考当时答辩（疫情原因采用线上答辩验收）时的自述文档：[此处](./自述/自述.md)。
+工程目前以“仿真可用、用于验证流水线与指令执行”为主要目标；如果需要上板，通常还需要进一步处理 ROM/RAM 初始化方式、外设/时钟复位约束等工程化细节。
 
-该设计因代码粗陋，无法正常烧板使用，但可以正常仿真。该设计已获评“优秀”。
+#### 指令集支持（以代码为准）
+
+当前 CPU 支持的测试指令集合为：
+
+- **RV32I（37 条核心子集）**：
+	- 算术与逻辑（19）：addi/ori/xori/andi/slli/srli/srai/slti/sltiu + add/sub/or/xor/and/sll/srl/sra/slt/sltu
+	- 大立即数（2）：lui/auipc
+	- 访存（8）：lw/lb/lbu/lh/lhu + sw/sb/sh
+	- 控制流（8）：jal/jalr + beq/bne/blt/bge/bltu/bgeu
+- **RV32M（8 条）**：mul/mulh/mulhsu/mulhu/div/divu/rem/remu
+- **Zbb 子集（5 条）**：min/minu/max/maxu/andn
+
+合计 **50 条指令**。
 
 ### 使用方法
 
-Clone代码后，使用Xilinx Vivado打开 `openriscv/opentiscv.xpr`文件，即可打开项目。我们使用的Vivado版本是2018.3。
+1. Clone 本仓库后，用 Vivado 打开工程文件 [openriscv/openriscv.xpr](openriscv/openriscv.xpr)。
+2. 运行行为级仿真（testbench：`openriscv_min_sopc_tb`）。
+3. 测试程序位于 [openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt](openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt)，为 50 条指令覆盖测试，并在每条指令后标注了预期写回结果。
+
+说明：工程文件头部标注的 Vivado 版本为 **2025.1**（见 xpr 内的 Product Version 注释）。不同版本 Vivado 的兼容性以本机环境为准。
 
 ### 参考
 

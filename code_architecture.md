@@ -57,18 +57,18 @@ graph TB
 
 | 文件 | 职责 | 输入 | 输出 | 复杂度 |
 |------|------|------|------|--------|
-| [define.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/define.v) | 宏常量定义 | - | - | ⭐ |
-| [pc_reg.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/pc_reg.v) | 程序计数器 | 时钟、分支信号 | PC 地址 | ⭐⭐ |
-| [if_id.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/if_id.v) | IF/ID 流水线寄存器 | PC、指令 | 延迟后的 PC、指令 | ⭐⭐ |
-| [id.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/id.v) | 指令译码 | 指令 | 控制信号、操作数 | ⭐⭐⭐⭐⭐ |
-| [regfile.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/regfile.v) | 32 个通用寄存器 | 读/写地址 | 寄存器值 | ⭐⭐⭐ |
-| [id_ex.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/id_ex.v) | ID/EX 流水线寄存器 | 译码结果 | 延迟后的译码结果 | ⭐⭐ |
-| [ex.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/ex.v) | ALU 计算 | 操作数 | 运算结果 | ⭐⭐⭐⭐ |
-| [ex_mem.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/ex_mem.v) | EX/MEM 流水线寄存器 | 执行结果 | 延迟后的执行结果 | ⭐⭐ |
-| [mem.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/mem.v) | 内存访问 | 地址、数据 | 读出的数据 | ⭐⭐⭐⭐ |
-| [mem_wb.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/mem_wb.v) | MEM/WB 流水线寄存器 | 访存结果 | 写回数据 | ⭐⭐ |
-| [ctrl.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/ctrl.v) | 流水线暂停控制 | 暂停请求 | 暂停信号 | ⭐⭐⭐ |
-| [openriscv.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v) | 顶层连接 | 外部 I/O | 外部 I/O | ⭐⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/define.v](openriscv/openriscv.srcs/sources_1/imports/code/define.v) | 宏常量定义 | - | - | ⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/pc_reg.v](openriscv/openriscv.srcs/sources_1/imports/code/pc_reg.v) | 程序计数器 | 时钟、分支信号 | PC 地址 | ⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/if_id.v](openriscv/openriscv.srcs/sources_1/imports/code/if_id.v) | IF/ID 流水线寄存器 | PC、指令 | 延迟后的 PC、指令 | ⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/id.v](openriscv/openriscv.srcs/sources_1/imports/code/id.v) | 指令译码 | 指令 | 控制信号、操作数 | ⭐⭐⭐⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/regfile.v](openriscv/openriscv.srcs/sources_1/imports/code/regfile.v) | 32 个通用寄存器 | 读/写地址 | 寄存器值 | ⭐⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/id_ex.v](openriscv/openriscv.srcs/sources_1/imports/code/id_ex.v) | ID/EX 流水线寄存器 | 译码结果 | 延迟后的译码结果 | ⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/ex.v](openriscv/openriscv.srcs/sources_1/imports/code/ex.v) | 执行/ALU | 操作数 | 运算结果/访存控制 | ⭐⭐⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/ex_mem.v](openriscv/openriscv.srcs/sources_1/imports/code/ex_mem.v) | EX/MEM 流水线寄存器 | 执行结果 | 延迟后的执行结果 | ⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/mem.v](openriscv/openriscv.srcs/sources_1/imports/code/mem.v) | 访存阶段 | 地址、数据 | 读出的数据/写 RAM | ⭐⭐⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/mem_wb.v](openriscv/openriscv.srcs/sources_1/imports/code/mem_wb.v) | MEM/WB 流水线寄存器 | 访存结果 | 写回数据 | ⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/ctrl.v](openriscv/openriscv.srcs/sources_1/imports/code/ctrl.v) | 流水线暂停控制 | 暂停请求 | 暂停信号 | ⭐⭐⭐ |
+| [openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v](openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v) | 顶层连接 | 外部 I/O | 外部 I/O | ⭐⭐⭐ |
 
 ---
 
@@ -114,13 +114,25 @@ graph TB
 `define INST_TYPE_B     7'b1100011    // B型：分支指令
 ```
 
+### 2.3 指令集支持与测试程序
+
+以当前代码实现为准，该 CPU 支持并在测试程序中覆盖：
+
+- RV32I（37 条核心子集）：19 条算术/逻辑 + 2 条大立即数 + 8 条访存 + 8 条控制流
+- RV32M（8 条）：mul/mulh/mulhsu/mulhu/div/divu/rem/remu
+- Zbb 子集（5 条）：min/minu/max/maxu/andn
+
+对应测试程序：
+
+- [openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt](openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt)
+
 ---
 
 ## 第三部分：模块间连接关系详解
 
 ### 3.1 顶层连接图（openriscv.v）
 
-下图展示了 [openriscv.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v) 中所有模块的连接关系：
+下图展示了 [openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v](openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v) 中所有模块的连接关系：
 
 ```
 ┌──────────────────────────────────────────────────────────────────────────────────────┐
@@ -159,7 +171,7 @@ graph TB
 
 ### 3.2 数据旁路（Data Forwarding）路径
 
-这是理解这个 CPU 最关键的部分！观察 [openriscv.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v#L121-L161) 中 `id` 模块的例化：
+这是理解这个 CPU 最关键的部分！观察 [openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v](openriscv/openriscv.srcs/sources_1/imports/code/openriscv.v) 中 `id` 模块的例化：
 
 ```verilog
 id id0(
@@ -272,7 +284,7 @@ add x1, x2, x3    # 指令 A：写入 x1
 add x4, x1, x5    # 指令 B：读取 x1 ← 此时 x1 还没写回！
 ```
 
-**解决方案：** 在 [id.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/id.v#L291-L314) 中实现数据前推
+**解决方案：** 在 [openriscv/openriscv.srcs/sources_1/imports/code/id.v](openriscv/openriscv.srcs/sources_1/imports/code/id.v) 中实现数据前推
 
 ```verilog
 // id.v 第 291-314 行：确定源操作数1
@@ -308,7 +320,7 @@ add x3, x1, x4    # 立即使用 x1 ← 此时 x1 的值还在内存中！
 
 **特殊性：** Load 指令要到 MEM 阶段才能拿到数据，前推无法解决，**必须暂停流水线一个周期**。
 
-**实现位置：** [ctrl.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/ctrl.v#L22-L31)
+**实现位置：** [openriscv/openriscv.srcs/sources_1/imports/code/ctrl.v](openriscv/openriscv.srcs/sources_1/imports/code/ctrl.v)
 
 ```verilog
 // 暂停信号说明：
@@ -339,7 +351,7 @@ add x3, x4, x5     # 这条指令已经进入流水线了！
 
 **解决方案：** 分支发生时，用空指令冲刷流水线
 
-**实现位置：** [if_id.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/if_id.v#L21-L33)
+**实现位置：** [openriscv/openriscv.srcs/sources_1/imports/code/if_id.v](openriscv/openriscv.srcs/sources_1/imports/code/if_id.v)
 
 ```verilog
 always @(posedge clk) begin
@@ -361,25 +373,14 @@ end
 
 ## 第六部分：指令执行完整案例
 
-### 6.1 案例：斐波那契数列
+### 6.1 案例：指令覆盖测试程序
 
-让我们追踪测试程序中斐波那契数列的计算过程：
+当前工程使用“指令覆盖测试程序”来验证 RV32I + RV32M + Zbb 子集指令的执行路径与写回结果。
 
-```asm
-# 初始化
-addi x1, x0, 1     # x1 = 1 (第一个数)
-addi x2, x0, 1     # x2 = 1 (第二个数)
-addi x3, x0, 0     # x3 = 0 (临时变量)
+- 测试程序： [openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt](openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt)
+- 特点：每条指令后面都写了期望写回值/行为（便于快速对照波形验证）。
 
-# 循环计算
-loop:
-    add  x3, x1, x2    # x3 = x1 + x2
-    addi x1, x2, 0     # x1 = x2
-    addi x2, x3, 0     # x2 = x3
-    jal  x0, loop      # 跳回 loop
-```
-
-**流水线执行视图：**
+**流水线执行视图：**（示意）
 
 ```
 周期:   1    2    3    4    5    6    7    8    9   10   11   12
@@ -407,11 +408,10 @@ add x3:                                      IF   ID   EX  MEM   WB
 
 | 信号 | 预期变化 | 对应模块 |
 |------|----------|----------|
-| `regfile.regs[1]` | 1 → 1 → 2 → 3 → 5 → ... | regfile.v |
-| `regfile.regs[2]` | 1 → 2 → 3 → 5 → 8 → ... | regfile.v |
-| `regfile.regs[3]` | 2 → 3 → 5 → 8 → 13 → ... | regfile.v |
-| `branch_flag` | 每次 JAL 时变为 1 | id.v |
-| `stall` | 全程应为 0（无 Load-Use 冒险） | ctrl.v |
+| `wr_addr` / `wr_data` | 与 `inst_rom.txt` 注释的“写回预期”一致 | regfile.v |
+| `ram_addr` / `ram_we` / `ram_data` | 与 lw/lb/lbu/lh/lhu 与 sw/sb/sh 行为一致 | data_ram.v / mem.v |
+| `branch_flag` / `branch_addr` | jal/jalr/分支类指令跳转目标正确 | id.v |
+| `stall` | 发生 load-use 冒险时暂停；本设计对 B 类指令也会触发暂停 | ctrl.v / id.v |
 
 ---
 
@@ -419,10 +419,10 @@ add x3:                                      IF   ID   EX  MEM   WB
 
 ### 如何找到某条指令的处理代码？
 
-1. **确定指令类型**：查看 [define.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/define.v) 中的 opcode 定义
-2. **译码阶段**：在 [id.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/id.v) 中搜索对应的 `case(opcode)` 和 `case(funct3)`
-3. **执行阶段**：在 [ex.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/ex.v) 中找到同样的 case 语句
-4. **访存阶段**：如果是 Load/Store，查看 [mem.v](file:///d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/mem.v)
+1. **确定指令类型**：查看 [openriscv/openriscv.srcs/sources_1/imports/code/define.v](openriscv/openriscv.srcs/sources_1/imports/code/define.v) 中的 opcode/funct 定义
+2. **译码阶段**：在 [openriscv/openriscv.srcs/sources_1/imports/code/id.v](openriscv/openriscv.srcs/sources_1/imports/code/id.v) 中搜索 `case(opcode)` / `case(funct3)`
+3. **执行阶段**：在 [openriscv/openriscv.srcs/sources_1/imports/code/ex.v](openriscv/openriscv.srcs/sources_1/imports/code/ex.v) 中查看 RV32I/RV32M/Zbb 的执行逻辑
+4. **访存阶段**：如果是 Load/Store，查看 [openriscv/openriscv.srcs/sources_1/imports/code/mem.v](openriscv/openriscv.srcs/sources_1/imports/code/mem.v)
 
 ### 常见调试入口点
 

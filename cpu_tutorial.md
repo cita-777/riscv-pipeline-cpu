@@ -120,9 +120,7 @@ code/
 
 ## 第四部分：理解仿真波形
 
-现在让我们对照您看到的仿真波形：
-
-![仿真波形](C:/Users/Administrator/.gemini/antigravity/brain/c51fb5c4-4ab3-462f-9ba2-cb12f9e12ec8/uploaded_image_1764944710839.png)
+本工程自带 Vivado 仿真工程与波形配置文件，你可以直接在 Vivado 的行为级仿真里观察信号变化（例如打开工程目录下的 `openriscv_min_sopc_tb_behav.wcfg`）。
 
 ### 信号与模块对应
 
@@ -140,14 +138,18 @@ code/
 
 ### 执行过程追踪
 
-测试程序是斐波那契数列，让我们看 `wr_data` 的变化：
+当前工程的测试程序不是斐波那契，而是“**指令覆盖测试程序**”，位于：
 
-```
-时间线:    1    2    3    5    8    13   ...
-wr_data:   1 →  1 →  2 →  3 →  5 →  8  → ...
-```
+- `openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt`
 
-这正是斐波那契数列！说明 CPU 正确执行了程序。
+它会覆盖：RV32I(37条子集) + RV32M(8条) + Zbb子集(5条：min/minu/max/maxu/andn)。
+
+建议的验证方式：
+
+- 观察 `regfile` 写回端口（如 `wr_addr`/`wr_data`）是否与 `inst_rom.txt` 中每条指令注释的“写回预期值”一致。
+- 观察访存相关信号（`ram_addr`/`ram_we`/`ram_data`）是否符合 lw/lb/lbu/lh/lhu 与 sw/sb/sh 的行为。
+
+注意：`inst_rom.v` 会对 ROM 中读出的 32-bit 指令做字节翻转（小端字节序转换），因此 `inst_rom.txt` 里每一行的 8 位十六进制串是“按字节倒序”的表示。
 
 ---
 
@@ -157,7 +159,7 @@ wr_data:   1 →  1 →  2 →  3 →  5 →  8  → ...
 
 ### 周期 1：取指 (IF)
 - `pc_reg` 输出 PC = 0x00000000
-- `inst_rom` 根据地址返回指令 0x93001000
+- `inst_rom` 根据地址返回一条 32 位指令（ROM 读取时会做字节翻转）
 
 ### 周期 2：译码 (ID)
 - `if_id` 将指令传给 `id` 模块
@@ -187,6 +189,8 @@ wr_data:   1 →  1 →  2 →  3 →  5 →  8  → ...
 2. **流水线** 让多条指令同时在不同阶段执行，提高效率
 3. **流水线寄存器** 隔离各阶段，保存中间数据
 4. **仿真波形** 是 CPU 内部信号随时间变化的快照
+
+补充：当前实现额外支持 RV32M 与 Zbb 子集运算（实现主要集中在 `ex.v`）。
 
 如果您想深入学习，建议：
 1. 阅读 `id.v` 了解指令如何被解析

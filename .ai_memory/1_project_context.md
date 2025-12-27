@@ -60,13 +60,13 @@ if_id.v    id_ex.v     ex_mem.v    mem_wb.v   (流水线寄存器)
 - **跳转**：jal, jalr
 - **U 型**：lui, auipc
 - **M 扩展**：mul, mulh, mulhsu, mulhu, div, divu, rem, remu
-- **杂项**：fence, fence.i, ecall, ebreak
-- **Zicsr**：csrrw (简化实现)
+ 
+说明：本工程当前实现与测试程序不包含 fence/fence.i/ecall/ebreak/csrrw 等杂项/CSR 指令。
 
 ## 核心规范
 - 采用数据前推和流水线暂停解决数据冲突
 - 分支指令在译码阶段计算跳转地址
-- 测试程序为斐波那契数列计算
+- 测试程序为指令覆盖测试，位于 `openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt`
 
 ## 参考资料
 - 雷思磊《自己动手写CPU》- OpenMIPS
