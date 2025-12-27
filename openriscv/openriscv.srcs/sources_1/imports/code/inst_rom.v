@@ -16,21 +16,21 @@ module inst_rom(
     //initial是面向仿真的，综合器一般不支持，需要的时候要改
     initial begin
         //readmemh是verilog的系统函数
-        $readmemh("d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt", inst_mem);
+        //$readmemh("d:/Desktop/riscv-pipeline-cpu/openriscv/openriscv.srcs/sources_1/imports/code/inst_rom.txt", inst_mem);
     end
 
     //当复位信号无效时，根据输入的地址，给出指令存储器ROM中对应的元素
     always @(*) begin
         if (rst == `RstEnable) begin
-            // inst_mem[0][`InstBus] = 32'h93001000;
-            // inst_mem[1][`InstBus] = 32'h13011000;
-            // inst_mem[2][`InstBus] = 32'h93011000;
-            // inst_mem[3][`InstBus] = 32'h1305a000;
-            // inst_mem[4][`InstBus] = 32'hb3812000;
-            // inst_mem[5][`InstBus] = 32'h93000100;
-            // inst_mem[6][`InstBus] = 32'h13810100;
-            // inst_mem[7][`InstBus] = 32'he3eaa1fe;
-            // inst_mem[8][`InstBus] = 32'h9301703e;
+            inst_mem[0][`InstBus] = 32'h93001000;
+            inst_mem[1][`InstBus] = 32'h13011000;
+            inst_mem[2][`InstBus] = 32'h93011000;
+            inst_mem[3][`InstBus] = 32'h1305a000;
+            inst_mem[4][`InstBus] = 32'hb3812000;
+            inst_mem[5][`InstBus] = 32'h93000100;
+            inst_mem[6][`InstBus] = 32'h13810100;
+            inst_mem[7][`InstBus] = 32'he3eaa1fe;
+            inst_mem[8][`InstBus] = 32'h9301703e;
             inst <= `ZeroWord;
         end else if (ce == `ChipDisable) begin
             inst <= `ZeroWord;
