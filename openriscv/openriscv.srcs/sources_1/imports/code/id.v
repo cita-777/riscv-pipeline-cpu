@@ -301,6 +301,9 @@ module id (
                     imm         <= {inst_i[31:12], 12'b0} + pc_i; //U型立即数 + PC
                     wd_o        <= rd;              //写回寄存器地址
                 end
+                default: begin
+                    // 未识别的指令类型保持默认值
+                end
             endcase
         end     //if
     end     //always
@@ -314,6 +317,7 @@ module id (
         end else if (is_load_i == 1'b1 && ex_wd_i == reg1_addr_o
             && reg1_read_o == 1'b1) begin
             stallreq_for_reg1_loadrelate <= `Stop;
+            reg1_o <= `ZeroWord;
         //接下来的两种情况是数据前推相关的操作
         end else if ((reg1_read_o == 1'b1) && (ex_wreg_i == 1'b1)
             && (ex_wd_i == reg1_addr_o)) begin
@@ -339,6 +343,7 @@ module id (
         end else if (is_load_i == 1'b1 && ex_wd_i == reg2_addr_o
             && reg2_read_o == 1'b1) begin
             stallreq_for_reg2_loadrelate <= `Stop;
+            reg2_o <= `ZeroWord;
         //接下来的两种情况是数据前推相关的操作
         end else if ((reg2_read_o == 1'b1) && (ex_wreg_i == 1'b1)
             && (ex_wd_i == reg2_addr_o)) begin

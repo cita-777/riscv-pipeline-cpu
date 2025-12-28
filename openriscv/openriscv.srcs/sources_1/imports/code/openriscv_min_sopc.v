@@ -22,14 +22,54 @@ module openriscv_min_sopc(
    (* DONT_TOUCH = "TRUE" *) wire                   ce;
    (* DONT_TOUCH = "TRUE" *) wire                   we;//RAM写使能
    (* DONT_TOUCH = "TRUE" *) wire[`RegBus]          display_reg;
+    wire[`RegBus]                                   reg3_debug_cpu;
+    reg[`RegBus]                                    reg3_dbg_sync1;
+    reg[`RegBus]                                    reg3_dbg_sync2;
+    wire[`RegBus]                                   reg3_dbg_ila;
    (* DONT_TOUCH = "TRUE" *) wire                   rst;
 
-   assign rst = ~rst_n;
-   //assign rst = rst_n;
+    // 复位信号：板上按键为高有效（ILA 实测：按下时 rst_n=1）。
+    // 设计内部统一使用高有效 rst。
+    assign rst = rst_n;
+
+   // ========= CPU 降频时钟 =========
+   // 说明：实现报告显示 50MHz 下存在较大负裕量，硬件上可能出现“仿真正常/板上异常”。
+   // 这里把 CPU 与 data_ram 跑在更低频率（默认 50MHz / 8 = 6.25MHz），
+   // 数码管扫描仍使用原始 50MHz，避免刷新闪烁。
+   reg [2:0] cpu_clk_div;
+   reg       cpu_clk;
+
+   always @(posedge clk) begin
+       if (rst == 1'b1) begin
+           cpu_clk_div <= 3'd0;
+           cpu_clk <= 1'b0;
+       end else begin
+           if (cpu_clk_div == 3'd3) begin
+               cpu_clk_div <= 3'd0;
+               cpu_clk <= ~cpu_clk;
+           end else begin
+               cpu_clk_div <= cpu_clk_div + 3'd1;
+           end
+       end
+   end
+
+   // ========= ILA 观测信号同步（CPU 域 -> clk 域）=========
+   // cpu_clk 由 clk 分频得到，二者同源；reg3 在 cpu_clk 域更新，
+   // 这里做两级采样，保证 ILA 采样域看到稳定值。
+   always @(posedge clk) begin
+       if (rst == 1'b1) begin
+           reg3_dbg_sync1 <= `ZeroWord;
+           reg3_dbg_sync2 <= `ZeroWord;
+       end else begin
+           reg3_dbg_sync1 <= reg3_debug_cpu;
+           reg3_dbg_sync2 <= reg3_dbg_sync1;
+       end
+   end
+   assign reg3_dbg_ila = reg3_dbg_sync2;
 
     //例化处理器OpenRISC-V
     openriscv openriscv0(
-        .clk(clk),
+        .clk(cpu_clk),
         .rst(rst),
         .rom_addr_o(inst_addr),
         .rom_data_i(inst),
@@ -40,7 +80,16 @@ module openriscv_min_sopc(
         .ram_data_i(ram_data_i),
         .ram_ce_o(ce),
         .ram_we_o(we),
-        .display_reg(display_reg)
+        .display_reg(display_reg),
+        .reg3_debug_o(reg3_debug_cpu)
+    );
+
+    // ========= ILA 实例化 =========
+    ila_0 ila_0_inst(
+        .clk(clk),
+        .probe0(rst),
+        .probe1(cpu_clk),
+        .probe2(reg3_dbg_ila)
     );
 
     //例化指令存储器ROM
@@ -53,7 +102,7 @@ module openriscv_min_sopc(
 
     //例化数据存储器RAM
     data_ram data_ram0(
-        .clk(clk),
+        .clk(cpu_clk),
         .addr(ram_addr),
         .data_o(ram_data_i),
         .data_i(ram_data_o),
@@ -64,7 +113,7 @@ module openriscv_min_sopc(
     //例化数码管驱动模块
     x7seg_top x7seg_top0(
         .clk(clk),
-        .rst(rst_n),
+        .rst(rst),
         .data_i(display_reg),
         .a_to_g_0(a_to_g_0),
         .a_to_g_1(a_to_g_1),

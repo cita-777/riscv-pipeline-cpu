@@ -9,36 +9,58 @@ module display_buffer(
     output reg[`RegBus]         display_reg1
 );
 
-    reg[`RegBus]    reg1_buf[0:20];
-    reg[4:0]        counter_i = 0;
-    reg[4:0]        counter_o = 0;
-    reg[`RegBus]    last_reg1 = 0;
+    localparam integer BUF_DEPTH = 21;
+    // 50MHz 下约 1 秒刷新一次；如板上时钟不同可调整
+    localparam integer WAIT_CYCLES = 50_000_000;
 
-    reg [23:0] counter = 0;
+    reg[`RegBus]    reg1_buf[0:BUF_DEPTH-1];
+    reg[4:0]        counter_i;
+    reg[4:0]        counter_o;
+    reg[`RegBus]    last_reg1;
+    reg[31:0]       wait_counter;
 
-    //在时钟周期的上升沿将reg1写入缓冲区索引为counter_i的位置
-    always @(*) begin
-        if (rst == `RstEnable) begin
-            counter_i <= 5'h0;
-        end else if (reg1 != last_reg1) begin
-                reg1_buf[counter_i] <= reg1;
-                counter_i <= counter_i + 1;
-                last_reg1 <= reg1;
-        end
-    end
+    // CPU 时钟域 -> 显示时钟域 同步/稳定性滤波
+    reg[`RegBus] reg1_sync1;
+    reg[`RegBus] reg1_sync2;
+    reg[`RegBus] reg1_sync3;
+    wire[`RegBus] reg1_s;
+    assign reg1_s = reg1_sync3;
 
+    // 同步采样与输出（避免组合写 RAM/锁存器导致综合后行为漂移）
     always @(posedge clk) begin
         if (rst == `RstEnable) begin
-            counter_o <= 5'h0;
-            counter <= 24'h0;
-            display_reg1 <= 32'h0;
+            counter_i <= 5'd0;
+            counter_o <= 5'd0;
+            last_reg1 <= `ZeroWord;
+            wait_counter <= 32'd0;
+            display_reg1 <= `ZeroWord;
+            reg1_sync1 <= `ZeroWord;
+            reg1_sync2 <= `ZeroWord;
+            reg1_sync3 <= `ZeroWord;
+        end else begin
+            reg1_sync1 <= reg1;
+            reg1_sync2 <= reg1_sync1;
+            reg1_sync3 <= reg1_sync2;
+
+            // 记录 reg1 的变化序列
+            // 额外要求连续两拍稳定，降低多位总线跨域采样的抖动概率
+            if ((reg1_sync2 == reg1_sync3) && (reg1_s != last_reg1) && (counter_i < BUF_DEPTH[4:0])) begin
+                reg1_buf[counter_i] <= reg1_s;
+                counter_i <= counter_i + 5'd1;
+                last_reg1 <= reg1_s;
+            end
+
+            // 定时把缓冲内容送到数码管
+            if (wait_counter >= (WAIT_CYCLES - 1)) begin
+                wait_counter <= 32'd0;
+                if ((counter_o < counter_i) && (reg1_buf[counter_o] != 32'h000003E7)) begin
+                    display_reg1 <= reg1_buf[counter_o];
+                    counter_o <= counter_o + 5'd1;
+                end
+            end else begin
+                wait_counter <= wait_counter + 32'd1;
+            end
         end
-        if (reg1_buf[counter_o] != 32'h3E7 && counter == 24'd10) begin
-            display_reg1 <= reg1_buf[counter_o];
-            counter_o <= counter_o + 1;
-            counter <= 24'h0;
-        end
-        counter <= counter + 1;
     end
 
 endmodule

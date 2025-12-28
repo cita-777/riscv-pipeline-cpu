@@ -16,7 +16,10 @@ module openriscv(
     output wire                 ram_ce_o,
     output wire                 ram_we_o,
 
-    output wire[`RegBus]        display_reg
+    output wire[`RegBus]        display_reg,
+
+    // Debug 导出：x3（用于 ILA 观测）
+    output wire[`RegBus]        reg3_debug_o
 );
 
     //连接IF/ID模块与译码阶段ID模块的变量
@@ -91,20 +94,21 @@ module openriscv(
 
     wire[`RegBus]           reg3_data;
 
+    assign reg3_debug_o = reg3_data;
+
     //pc_reg例化
     pc_reg pc_reg0(
         .clk(clk),
         .rst(rst),
         .stall(stall),
         .pc(pc),
-        .ce(rom_ce_o_link),
+        .ce(rom_ce_o),
 
         .branch_flag_i(branch_flag),
         .branch_addr_i(branch_addr)
     );
 
     assign rom_addr_o = pc;     //指令存储器输入地址就是pc的值
-    assign rom_ce_o = rom_ce_o_link;
 
     //IF/ID模块例化
     if_id if_id0(

@@ -16,8 +16,9 @@ module openriscv_min_sopc_tb();
         // $dumpfile("wave.vcd");        //生成的vcd文件名称
         // $dumpvars(0, openriscv_min_sopc_tb);    //tb模块名称
 
-        rst = `RstDisable;
-        #95 rst = `RstEnable;
+        // 顶层端口名为 rst_n，但板上按键/设计内部复位为高有效
+        rst = `RstEnable;
+        #95 rst = `RstDisable;
         #3000 $finish;
     end
 
