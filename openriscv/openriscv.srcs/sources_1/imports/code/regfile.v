@@ -30,13 +30,20 @@ module regfile (
 
 reg [`RegBus] regs[0:`RegNum-1];
 
+integer i;
+
 //寄存器堆需要特别注意的就是x0，它在MIPS和RISC-V都被硬连线到0，永远不能改变值
 
 //写操作是时序逻辑，只在clk的上升沿写入寄存器
 // ********** 写操作 **********
 
 always @(posedge clk) begin
-    if (rst == `RstDisable) begin       //如果没有复位
+    if (rst == `RstEnable) begin
+        reg3_o <= `ZeroWord;
+        for (i = 0; i < `RegNum; i = i + 1) begin
+            regs[i] <= `ZeroWord;
+        end
+    end else begin
         //如果写允许，且写的不是x0，就执行写入。写入x0将不会有任何效果。
         if ((we == `WriteEnable) && (wr_addr != `RegNumLog2'h0)) begin
             regs[wr_addr] <= wr_data;

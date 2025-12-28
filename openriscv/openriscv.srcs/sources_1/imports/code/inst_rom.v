@@ -31,7 +31,9 @@ module inst_rom(
                 11'd6: inst_raw = 32'h13810100; // addi x2, x3, 0
                 11'd7: inst_raw = 32'he3eaa1fe; // bltu x3, x10, -12
                 11'd8: inst_raw = 32'h9301703e; // addi x3, x0, 999
-                default: inst_raw = 32'h00000000;
+                // 未定义区域：输出 jal x0, 0（原地死循环）避免PC继续跑导致ROM地址回卷再执行一遍
+                // 注意这里 inst_raw 仍是“字节反序”存储格式，因此 jal 0x0000006f 对应 0x6f000000
+                default: inst_raw = 32'h6f000000;
             endcase
 
             // inst_raw 为字节反序存储，这里翻转为CPU实际指令
