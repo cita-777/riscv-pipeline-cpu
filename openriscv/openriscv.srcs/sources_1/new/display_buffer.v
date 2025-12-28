@@ -1,3 +1,7 @@
+//==============================================================================
+// 文件名: display_buffer.v
+// 功能描述: 显示缓冲模块，实现寄存器值到数码管的延时刷新
+//==============================================================================
 `timescale 1ns/1ps
 
 `include "define.v"
@@ -28,9 +32,11 @@ module display_buffer(
     wire[`RegBus] reg1_s;
     assign reg1_s = reg1_sync3;
 
-    // 同步采样与输出（避免组合写 RAM/锁存器导致综合后行为漂移）
+// ********** 同步采样与定时输出逻辑 **********
+
     always @(posedge clk) begin
         if (rst == `RstEnable) begin
+            //复位时清零所有计数器和缓冲
             counter_i <= 5'd0;
             counter_o <= 5'd0;
             last_reg1 <= `ZeroWord;
@@ -43,6 +49,7 @@ module display_buffer(
                 reg1_buf[j] <= `ZeroWord;
             end
         end else begin
+            //三级同步采样，防止亚稳态
             reg1_sync1 <= reg1;
             reg1_sync2 <= reg1_sync1;
             reg1_sync3 <= reg1_sync2;

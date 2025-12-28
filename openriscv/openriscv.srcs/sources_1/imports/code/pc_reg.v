@@ -1,3 +1,7 @@
+//==============================================================================
+// 文件名: pc_reg.v
+// 功能描述: 程序计数器模块，实现 PC 的更新和分支跳转
+//==============================================================================
 `timescale 1ns/1ps
 
 `include "define.v"
@@ -17,6 +21,8 @@ module pc_reg (
     output reg                  ce
 );
 
+// ********** CE 信号控制 **********
+
     always @(posedge clk) begin
         if (rst == `RstEnable) begin
             ce <= `ChipDisable;         //复位时指令存储器禁用
@@ -24,6 +30,8 @@ module pc_reg (
             ce <= `ChipEnable;
         end
     end
+
+// ********** PC 更新逻辑 **********
 
     always @(posedge clk) begin
         if (ce == `ChipDisable) begin

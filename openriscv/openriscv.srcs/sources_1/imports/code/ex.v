@@ -1,3 +1,7 @@
+//==============================================================================
+// 文件名: ex.v
+// 功能描述: 执行阶段模块，实现 ALU 运算和访存地址计算
+//==============================================================================
 `timescale 1ns/1ps
 
 `include "define.v"
@@ -5,17 +9,17 @@
 module ex(
     input wire                  rst,
 
-    //译码阶段传递到执行阶段的信息
+    // 译码阶段传递到执行阶段的信息
     input wire[`RegBus]         reg1_i,
     input wire[`RegBus]         reg2_i,
     input wire[`RegAddrBus]     wd_i,
     input wire                  wreg_i,
     input wire[`InstBus]        inst_i,
 
-    //执行的结果
-    output reg[`RegAddrBus]     wd_o,        //写回寄存器地址
-    output reg                  wreg_o,      //写使能
-    output reg[`RegBus]         wdata_o,     //写回数据
+    // 执行的结果
+    output reg[`RegAddrBus]     wd_o,        // 写回寄存器地址
+    output reg                  wreg_o,      // 写使能
+    output reg[`RegBus]         wdata_o,     // 写回数据
 
     output reg[6:0]             opcode_o,
     output reg[2:0]             funct3_o,
@@ -24,14 +28,14 @@ module ex(
     output wire[1:0]            mem_rindex_o,
     output wire[1:0]            mem_windex_o,
 
-    output reg                  is_load_o,      //当前指令是否为load指令，用于传入id模块以实现流水线暂停
+    // 当前指令是否为load指令，用于传入id模块以实现流水线暂停
+    output reg                  is_load_o,
 
-    //流水线暂停信号
+    // 流水线暂停信号
     output wire                 stall_req_from_ex
 );
 
-    //保存逻辑运算的结果
-    reg[`RegBus] logicout;
+// ********** 指令字段解码 **********
 
     wire[6:0] opcode;
     wire[2:0] funct3;
@@ -48,6 +52,8 @@ module ex(
     assign funct7 = inst_i[31:25];
     assign rd     = inst_i[11:7];
 
+// ********** 辅助运算信号 **********
+
     //有符号数比较
     assign op1_greater_than_op2_singned     =   ($signed(reg1_i) >= $signed(reg2_i));
     //无符号数比较
@@ -60,6 +66,8 @@ module ex(
     assign mem_windex_o = (reg1_i + {{20{inst_i[31]}}, inst_i[31:25], inst_i[11:7]}) & 2'b11;
 
     assign stall_req_from_ex = `NoStop;
+
+// ********** 执行逻辑主体 **********
 
     always @(*) begin
         wreg_o <= wreg_i;

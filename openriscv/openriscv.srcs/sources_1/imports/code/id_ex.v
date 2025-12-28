@@ -1,4 +1,7 @@
-//ID/EX模块，功能十分简单，就是将译码的结果在clk上升沿传递给执行模块
+//==============================================================================
+// 文件名: id_ex.v
+// 功能描述: ID/EX 流水线寄存器，传递译码结果到执行阶段
+//==============================================================================
 `timescale 1ns/1ps
 
 `include "define.v"
@@ -21,26 +24,32 @@ module id_ex(
     output reg[`InstBus]        ex_inst
 );
 
+// ********** 流水线寄存器传递逻辑 **********
+
     always @(posedge clk) begin
         if (rst == `RstEnable) begin
+            //复位时清零所有输出
             ex_reg1         <= `ZeroWord;
             ex_reg2         <= `ZeroWord;
             ex_wd           <= `NOPRegAddr;
             ex_wreg         <= `WriteDisable;
             ex_inst         <= `EXE_NOP;
         end else if (stall[2] == `Stop && stall[3] == `NoStop) begin
+            //ID暂停而EX不暂停时，插入空泡
             ex_reg1         <= `ZeroWord;
             ex_reg2         <= `ZeroWord;
             ex_wd           <= `NOPRegAddr;
             ex_wreg         <= `WriteDisable;
             ex_inst         <= `EXE_NOP;
         end else if (stall[2] == `NoStop) begin
+            //正常情况下传递数据
             ex_reg1         <= id_reg1;
             ex_reg2         <= id_reg2;
             ex_wd           <= id_wd;
             ex_wreg         <= id_wreg;
             ex_inst         <= id_inst;
         end
+        //stall[2]==Stop时保持不变
     end
 
 endmodule

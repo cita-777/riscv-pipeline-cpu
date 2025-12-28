@@ -1,3 +1,7 @@
+//==============================================================================
+// 文件名: if_id.v
+// 功能描述: IF/ID 流水线寄存器，传递指令和 PC 到译码阶段
+//==============================================================================
 `timescale 1ns/1ps
 
 `include "define.v"
@@ -17,6 +21,8 @@ module if_id(
     output reg[`InstAddrBus]    id_pc,
     output reg[`InstBus]        id_inst
 );
+
+// ********** 流水线寄存器传递逻辑 **********
 
     always @(posedge clk) begin
         if (rst == `RstEnable) begin

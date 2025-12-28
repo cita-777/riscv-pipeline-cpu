@@ -1,3 +1,7 @@
+//==============================================================================
+// 文件名: openriscv_min_sopc_tb.v
+// 功能描述: 仿真测试平台，验证 CPU 功能正确性
+//==============================================================================
 `include "define.v"
 
 `timescale 1ns/1ps
@@ -7,19 +11,19 @@ module openriscv_min_sopc_tb();
     reg CLOCK_50;
     reg rst;
 
+// ********** 时钟生成 **********
+
     initial begin
         CLOCK_50 = 1'b0;
-        forever #10 CLOCK_50 = ~CLOCK_50;
+        forever #10 CLOCK_50 = ~CLOCK_50;  //50MHz时钟，周期20ns
     end
 
-    initial begin
-        // $dumpfile("wave.vcd");        //生成的vcd文件名称
-        // $dumpvars(0, openriscv_min_sopc_tb);    //tb模块名称
+// ********** 复位与仿真控制 **********
 
-        // 顶层端口名为 rst_n，但板上按键/设计内部复位为高有效
-        rst = `RstEnable;
-        #95 rst = `RstDisable;
-        #3000 $finish;
+    initial begin
+        rst = `RstEnable;           //初始复位
+        #95 rst = `RstDisable;      //95ns后释放复位
+        #3000 $finish;              //仿真运行3000ns后结束
     end
 
     openriscv_min_sopc openriscv_min_sopc0(

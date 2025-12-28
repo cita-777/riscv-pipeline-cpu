@@ -1,3 +1,7 @@
+//==============================================================================
+// 文件名: data_ram.v
+// 功能描述: 数据存储器模块，实现读写数据存储
+//==============================================================================
 `timescale 1ns/1ps
 
 `include "define.v"
@@ -13,14 +17,16 @@ module data_ram (
 
     reg[`DataBus] data_mem[0:`DataMemNum-1];
 
-    //写操作
+// ********** 写操作 **********
+
     always @(posedge clk) begin
         if (ce == `ChipEnable && we == `WriteEnable) begin
             data_mem[addr] <= data_i;
         end
     end
 
-    //读操作
+// ********** 读操作 **********
+
     always @(*) begin
         if (ce == `ChipDisable) begin
             data_o <= `ZeroWord;
