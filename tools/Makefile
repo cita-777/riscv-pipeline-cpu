@@ -75,9 +75,13 @@ dump: $(TARGET).om
 	$(OBJDUMP) -d $<
 
 # ============================================================
-# 安装到 Verilog 项目目录
+# 安装到 Verilog 项目目录（只复制，不重新编译）
 # ============================================================
-install: $(TARGET).data
+install:
+	@if [ ! -f $(TARGET).data ]; then \
+		echo "错误: $(TARGET).data 不存在，请先运行 make 或 make SRC=xxx.s"; \
+		exit 1; \
+	fi
 	@echo "复制 $(TARGET).data 到 Verilog 项目..."
 	cp $(TARGET).data $(VERILOG_DIR)/inst_rom.txt
 	@echo "安装完成！"
